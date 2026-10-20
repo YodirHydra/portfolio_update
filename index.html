@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mohammad Badol — React Frontend & ASP.NET Full Stack Developer</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{obsidian:'#080808',surface:'#121214',accent:'#f9572a',muted:'#9ca3af'},fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>body{background:#080808;color:#fff;font-family:'Inter',sans-serif;overflow-x:clip}
+.glass-panel{background:rgba(18,18,20,.65);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.animate-marquee{display:flex;width:max-content;animation:marquee 35s linear infinite}
+.animate-marquee:hover{animation-play-state:paused}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#080808}
+::-webkit-scrollbar-thumb{background:#27272a;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:#f9572a}
+.reveal{opacity:0;transform:translateY(20px);transition:all .7s ease}
+.reveal.show{opacity:1;transform:none}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#f9572a}
+a:focus-visible,button:focus-visible{outline:2px solid #f9572a;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.animate-marquee{animation:none}.reveal{opacity:1;transform:none;transition:none}}
+
+/* ---- Custom cursor ---- */
+.has-cursor,.has-cursor *{cursor:none!important}
+#mb-cursor{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s;will-change:transform,width,height}
+#mb-cursor .c{position:absolute;width:9px;height:9px;border:0 solid #f9572a;transition:transform .15s ease}
+#mb-cursor .tl{top:0;left:0;border-top-width:2px;border-left-width:2px}
+#mb-cursor .tr{top:0;right:0;border-top-width:2px;border-right-width:2px}
+#mb-cursor .bl{bottom:0;left:0;border-bottom-width:2px;border-left-width:2px}
+#mb-cursor .br{bottom:0;right:0;border-bottom-width:2px;border-right-width:2px}
+#mb-cursor .dot{position:absolute;top:50%;left:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#f9572a;box-shadow:0 0 10px rgba(249,87,42,.8);transition:transform .15s ease}
+#mb-cursor.on-btn .dot{transform:scale(.7)}
+#mb-cursor.press .dot{transform:scale(2)}
+#mb-cursor.press .tl{transform:translate(4px,4px)}#mb-cursor.press .tr{transform:translate(-4px,4px)}
+#mb-cursor.press .bl{transform:translate(4px,-4px)}#mb-cursor.press .br{transform:translate(-4px,-4px)}
+.mb-ring{position:fixed;width:14px;height:14px;margin:-7px 0 0 -7px;border:2px solid #f9572a;border-radius:50%;pointer-events:none;z-index:9998;animation:mbring .5s ease-out forwards}
+@keyframes mbring{to{transform:scale(4);opacity:0}}
+
+/* ---- Responsive polish ---- */
+html{-webkit-text-size-adjust:100%;scroll-padding-top:5rem}
+html,body{max-width:100%}
+body{overflow-x:clip}  /* clip (not hidden) so position:sticky keeps working */
+img,video{max-width:100%}
+section[id]{scroll-margin-top:4.5rem}
+a,button{-webkit-tap-highlight-color:transparent}
+@media (max-width:640px){
+  input,select,textarea{font-size:16px!important}           /* stops iOS zoom on focus */
+  a.rounded-xl,button.rounded-xl{min-height:44px}             /* comfortable tap targets */
+  #toast{bottom:max(1rem,env(safe-area-inset-bottom))}
+}
+@media (max-width:380px){
+  h1{font-size:2.6rem!important}
+  h2{font-size:1.75rem!important}
+}
+@media (min-width:1536px){.max-w-7xl{max-width:90rem}}
+</style>
+<link rel="icon" type="image/png" href="logo.jpg">
+</head>
+<body class="selection:bg-accent selection:text-white">
+
+<div id="toast" class="fixed bottom-6 right-4 left-4 sm:left-auto sm:right-6 z-50 translate-y-32 opacity-0 transition-all duration-300">
+  <div class="glass-panel px-5 py-3.5 rounded-xl border border-accent/30 shadow-2xl flex items-center gap-3">
+    <div class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shrink-0"></div>
+    <span id="toast-message" class="text-sm font-medium"></span>
+  </div>
+</div>
+
+<!-- Status bar -->
+<div class="bg-surface border-b border-white/5 text-xs py-2 px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-1 font-mono">
+  <span class="text-muted text-center">Now: <strong class="text-white">Aspiring Software Developer | CSE Student | Cybersecurity Enthusiast</strong></span>
+  <span class="text-muted flex items-center gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-accent"></i>Dhaka, Bangladesh <span id="live-clock" class="text-accent font-semibold">--:--:-- BDT</span></span>
+</div>
+
+<!-- Header -->
+<header class="sticky top-0 z-40 backdrop-blur-xl bg-obsidian/80 border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-3 group">
+<div class="w-10 h-10 rounded-xl bg-surface border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-accent transition-colors">
+  <img src="logo.jpg" alt="Mohammad Badol logo" class="w-full h-full object-contain p-1">
+</div>
+      <div class="flex flex-col"><span class="font-bold text-sm group-hover:text-accent transition-colors">Mohammad Badol</span><span class="text-[10px] font-mono text-muted uppercase">Full Stack Dev</span></div>
+    </a>
+    <nav class="hidden md:flex items-center glass-panel px-4 py-2 rounded-full" id="desktop-nav"></nav>
+    <div class="flex items-center gap-2">
+      <button onclick="downloadResume()" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-surface border border-white/10 hover:border-accent text-xs font-semibold"><i data-lucide="download" class="w-3.5 h-3.5 text-accent"></i>Resume</button>
+      <a href="#contact" class="px-4 py-2 rounded-xl bg-accent hover:bg-accent/90 text-xs font-semibold shadow-lg shadow-accent/20">Let's Talk</a>
+      <button onclick="toggleMenu()" aria-label="Open menu" class="md:hidden p-2 rounded-xl bg-surface border border-white/10"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div id="mobile-menu" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl translate-x-full transition-transform duration-300 md:hidden flex flex-col p-6">
+  <div class="flex justify-between items-center mb-8">
+    <span class="font-bold text-lg">Menu</span>
+    <button onclick="toggleMenu()" aria-label="Close menu" class="p-2 rounded-xl bg-surface border border-white/10"><i data-lucide="x" class="w-6 h-6"></i></button>
+  </div>
+  <div id="mobile-links" class="flex flex-col gap-4 text-lg font-medium"></div>
+  <button onclick="downloadResume();toggleMenu()" class="mt-auto w-full py-3 bg-surface border border-white/10 rounded-xl font-semibold">Download Resume</button>
+</div>
+
+<!-- Side dots -->
+<div id="dots" class="fixed right-5 top-1/2 -translate-y-1/2 z-30 hidden xl:flex flex-col items-center gap-4 bg-surface/80 backdrop-blur-md p-3 rounded-full border border-white/10"></div>
+
+<!-- HOME -->
+<section id="home" class="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-16 sm:pt-16 sm:pb-24">
+  <div class="grid lg:grid-cols-12 gap-12 items-center">
+    <div class="lg:col-span-7 space-y-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface border border-accent/30 text-accent text-[11px] sm:text-xs font-mono"><span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>REACT FRONTEND & ASP.NET FULL STACK</div>
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none">Mohammad <br><span class="text-accent">Badol.</span></h1>
+      <p class="text-base sm:text-lg text-muted max-w-2xl leading-relaxed">Aspiring Software Developer passionate about web development, cybersecurity, and innovative technology. Focused on building practical projects, sharpening technical skills, and creating impactful digital solutions.</p>
+      <div class="flex flex-wrap gap-3 pt-2">
+        <a href="#works" class="px-6 py-3.5 bg-accent hover:bg-accent/90 font-semibold rounded-xl shadow-lg shadow-accent/25 flex items-center gap-2">View my work <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+        <a href="#contact" class="px-6 py-3.5 bg-surface hover:bg-white/10 border border-white/10 font-semibold rounded-xl">Contact me</a>
+      </div>
+      <div class="grid grid-cols-3 gap-4 sm:gap-6 pt-8 border-t border-white/10">
+        <div><span class="block text-2xl font-bold font-mono">2+</span><span class="text-[10px] sm:text-xs text-muted font-mono uppercase">Years React</span></div>
+        <div><span class="block text-2xl font-bold font-mono text-accent">8+</span><span class="text-[10px] sm:text-xs text-muted font-mono uppercase">Production Apps</span></div>
+        <div><span class="block text-2xl font-bold font-mono">100%</span><span class="text-[10px] sm:text-xs text-muted font-mono uppercase">Client Satisfaction</span></div>
+      </div>
+    </div>
+    <div class="lg:col-span-5 flex justify-center">
+      <div class="relative w-full max-w-md">
+        <div class="glass-panel p-3 sm:p-4 rounded-3xl overflow-hidden shadow-2xl group">
+          <div class="relative w-full h-[340px] sm:h-[400px] rounded-2xl overflow-hidden bg-surface">
+            <img src="badol.PNG" alt="Mohammad Badol" onerror="this.src='https://placehold.co/600x800/121214/f9572a?text=Mohammad+Badol'" class="w-full h-full object-cover transition-all duration-700"">
+            <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-80"></div>
+            <div class="absolute top-4 left-4 glass-panel px-3 py-1.5 rounded-full flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-[11px] font-mono">Available for Hire</span></div>
+            <div class="absolute bottom-4 left-4 right-4 p-4 glass-panel rounded-xl"><span class="text-[10px] font-mono text-accent uppercase">Full Stack Developer</span><h3 class="text-sm font-bold">Mohammad Badol</h3><p class="text-xs text-muted mt-0.5">React, Next.js & ASP.NET</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tech marquee -->
+<div class="py-5 bg-surface border-y border-white/10 overflow-hidden">
+  <div class="animate-marquee gap-8 whitespace-nowrap font-mono text-sm text-muted tracking-widest uppercase" data-marquee="JAVASCRIPT,TAILWIND CSS,REDUX TOOLKIT,ASP.NET,NODE.JS,EXPRESS.JS,MONGODB,STRIPE,FIGMA,REACT.JS,TYPESCRIPT,NEXT.JS,REST API"></div>
+</div>
+
+<!-- WORKS -->
+<section id="works" class="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-8">
+  <span class="text-xs font-mono text-accent uppercase tracking-widest">// PORTFOLIO SHOWCASE</span>
+  <h2 class="text-4xl sm:text-5xl font-extrabold mt-2 mb-12 tracking-tight">Selected Work.</h2>
+  <div class="grid lg:grid-cols-12 gap-10 items-start">
+    <div id="projects-list" class="lg:col-span-7 space-y-6"></div>
+    <div class="hidden lg:block lg:col-span-5 sticky top-28">
+      <div class="glass-panel p-8 rounded-3xl border-accent/30 shadow-2xl">
+        <div class="flex justify-between mb-6"><span id="p-cat" class="text-xs font-mono text-accent uppercase"></span><span id="p-num" class="text-xs font-mono text-muted"></span></div>
+        <h3 id="p-title" class="text-3xl font-bold mb-4"></h3>
+        <div id="p-tech" class="flex flex-wrap gap-2 mb-6"></div>
+        <p id="p-sum" class="text-muted text-sm leading-relaxed mb-6"></p>
+        <div class="border-t border-white/10 pt-6 mb-8"><span class="text-xs font-mono uppercase block mb-3">Key Achievements</span><ul id="p-ach" class="space-y-2 text-sm text-muted"></ul></div>
+        <div class="flex gap-3">
+          <button onclick="showToast('Case study coming soon')" class="flex-1 py-3 bg-accent hover:bg-accent/90 font-semibold rounded-xl text-xs">Read case study</button>
+          <button onclick="showToast('Live demo coming soon')" class="px-5 py-3 bg-surface border border-white/10 hover:bg-white/10 font-semibold rounded-xl text-xs">Live Demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO I AM -->
+<section id="whoiam" class="py-20 sm:py-28 bg-surface/40 border-y border-white/5">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8">
+    <span class="text-xs font-mono text-accent uppercase tracking-widest">// WHO I AM</span>
+    <div class="grid lg:grid-cols-12 gap-10 mt-6 items-center">
+      <div class="lg:col-span-7">
+        <h2 class="text-2xl sm:text-4xl font-extrabold leading-snug">"I’m Mohammad Badol, a CSE student and Cybersecurity Enthusiast from Dhaka, Bangladesh. Passionate about ethical hacking, CTF challenges, Python, and AI-driven solutions, I enjoy exploring technologies, solving complex problems, and building practical projects. From cybersecurity to web development, I’m constantly learning and expanding my skills to create secure, intelligent, and impactful digital solutions."</h2>
+        <p class="text-muted mt-6 leading-relaxed">"Cybersecurity, problem-solving, and innovation drive my work. From exploring vulnerabilities and tackling CTF challenges to developing with Python, React, and AI/ML, I combine analytical thinking with hands-on engineering to build practical, secure, and intelligent solutions."</p>
+        <a href="#" onclick="showToast('Opens about.html on your PC');return false" class="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-accent hover:bg-accent/90 font-semibold rounded-xl shadow-lg shadow-accent/25 text-sm">View more about me <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+        <div class="glass-panel p-5 rounded-2xl text-center"><span class="block text-4xl font-black font-mono text-accent" data-target="2" data-suffix="+">0</span><span class="text-[11px] font-mono text-muted uppercase">Years React</span></div>
+        <div class="glass-panel p-5 rounded-2xl text-center"><span class="block text-4xl font-black font-mono" data-target="3">0</span><span class="text-[11px] font-mono text-muted uppercase">Roles</span></div>
+        <div class="glass-panel p-5 rounded-2xl text-center"><span class="block text-4xl font-black font-mono" data-target="8">0</span><span class="text-[11px] font-mono text-muted uppercase">Key Projects</span></div>
+        <div class="glass-panel p-5 rounded-2xl text-center"><span class="block text-4xl font-black font-mono text-accent" data-target="15" data-suffix="+">0</span><span class="text-[11px] font-mono text-muted uppercase">Tools</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES I'VE WORKED WITH -->
+<section id="languages" class="py-20 sm:py-28 max-w-5xl mx-auto px-4 sm:px-8">
+  <span class="text-xs font-mono text-accent uppercase tracking-widest">// TECH STACK</span>
+  <h2 class="text-4xl sm:text-5xl font-extrabold mt-2 tracking-tight">Languages I’ve Worked With.</h2>
+  <ul class="flex flex-wrap justify-center gap-4 mt-12 list-none p-0">
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="HTML5"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#E44D26" d="M19.037 113.876L9.032 1.661h109.936l-10.016 112.198-45.019 12.48z"/><path fill="#F16529" d="M64 116.8l36.378-10.086 8.559-95.878H64z"/><path fill="#EBEBEB" d="M64 52.455H45.788L44.53 38.361H64V24.599H29.489l.33 3.692 3.382 37.927H64zm0 35.743l-.061.017-15.327-4.14-.979-10.975H33.816l1.928 21.609 28.193 7.826.063-.017z"/><path fill="#fff" d="M63.952 52.455v13.763h16.947l-1.597 17.849-15.35 4.143v14.319l28.215-7.82.207-2.325 3.234-36.233.335-3.696h-3.708zm0-27.856v13.762h33.244l.276-3.092.628-6.978.329-3.692z"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">HTML</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="CSS3"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#1572B6" d="M18.814 114.123L8.76 1.352h110.48l-10.064 112.754-45.243 12.543-45.119-12.526z"/><path fill="#33A9DC" d="M64.001 117.062l36.559-10.136 8.601-96.354h-45.16v106.49z"/><path fill="#fff" d="M64.001 51.429h18.302l1.264-14.163H64.001V23.435h34.682l-.332 3.711-3.4 38.114h-30.95V51.429z"/><path fill="#EBEBEB" d="M64.083 87.349l-.061.018-15.403-4.159-.985-11.031H33.752l1.937 21.717 28.331 7.863.063-.018v-14.39z"/><path fill="#fff" d="M81.127 64.675l-1.666 18.522-15.426 4.164v14.39l28.354-7.858.208-2.337 2.406-26.881H81.127z"/><path fill="#EBEBEB" d="M64.048 23.435v13.831H30.64l-.277-3.108-.63-7.012-.331-3.711h34.646zm-.047 27.996v13.831H48.792l-.277-3.108-.631-7.012-.33-3.711h16.447z"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">CSS</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="JavaScript"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">JavaScript</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="Java"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#0074BD" d="M47.617 98.12s-4.767 2.774 3.397 3.71c9.892 1.13 14.947.968 25.845-1.092 0 0 2.871 1.795 6.873 3.351-24.439 10.47-55.308-.607-36.115-5.969zm-2.988-13.665s-5.348 3.959 2.823 4.805c10.567 1.091 18.91 1.18 33.354-1.6 0 0 1.993 2.025 5.132 3.131-29.542 8.64-62.446.68-41.309-6.336z"/><path fill="#EA2D2E" d="M69.802 61.271c6.025 6.935-1.58 13.17-1.58 13.17s15.289-7.891 8.269-17.777c-6.559-9.215-11.587-13.792 15.635-29.58 0 .001-42.731 10.67-22.324 34.187z"/><path fill="#0074BD" d="M102.123 108.229s3.529 2.91-3.888 5.159c-14.102 4.272-58.706 5.56-71.094.171-4.451-1.938 3.899-4.625 6.526-5.192 2.739-.593 4.303-.485 4.303-.485-4.953-3.487-32.013 6.85-13.743 9.815 49.821 8.076 90.817-3.637 77.896-9.468zM49.912 70.294s-22.686 5.389-8.033 7.348c6.188.828 18.518.638 30.011-.326 9.39-.789 18.813-2.474 18.813-2.474s-3.308 1.419-5.704 3.053c-23.042 6.061-67.544 3.238-54.731-2.958 10.832-5.239 19.644-4.643 19.644-4.643zm40.697 22.747c23.421-12.167 12.591-23.86 5.032-22.285-1.848.385-2.677.72-2.677.72s.688-1.079 2-1.543c14.953-5.255 26.451 15.503-4.823 23.725 0-.002.359-.327.468-.617z"/><path fill="#EA2D2E" d="M76.491 1.587S89.459 14.563 64.188 34.51c-20.266 16.006-4.621 25.13-.007 35.559-11.831-10.673-20.509-20.07-14.688-28.815C58.041 28.42 81.722 22.195 76.491 1.587z"/><path fill="#0074BD" d="M52.214 126.021c22.476 1.437 57-.8 57.817-11.436 0 0-1.571 4.032-18.577 7.231-19.186 3.612-42.854 3.191-56.887.874 0 .001 2.875 2.381 17.647 3.331z"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">Java</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="Python"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><linearGradient id="python-python-original-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="python-python-original-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#python-python-original-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)"/><path fill="url(#python-python-original-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)"/><radialGradient id="python-python-original-c" cx="1825.678" cy="444.45" r="26.743" gradientTransform="matrix(0 -.24 -1.055 0 532.979 557.576)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B8B8B8" stop-opacity=".498"/><stop offset="1" stop-color="#7F7F7F" stop-opacity="0"/></radialGradient><path opacity=".444" fill="url(#python-python-original-c)" d="M97.309 119.597c0 3.543-14.816 6.416-33.091 6.416-18.276 0-33.092-2.873-33.092-6.416 0-3.544 14.815-6.417 33.092-6.417 18.275 0 33.091 2.872 33.091 6.417z"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">Python</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="PHP"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="url(#php-a)" d="M0 64c0 18.593 28.654 33.667 64 33.667 35.346 0 64-15.074 64-33.667 0-18.593-28.655-33.667-64-33.667C28.654 30.333 0 45.407 0 64Z"/><path fill="#777bb3" d="M64 95.167c33.965 0 61.5-13.955 61.5-31.167 0-17.214-27.535-31.167-61.5-31.167S2.5 46.786 2.5 64c0 17.212 27.535 31.167 61.5 31.167Z"/><path d="M34.772 67.864c2.793 0 4.877-.515 6.196-1.53 1.306-1.006 2.207-2.747 2.68-5.175.44-2.27.272-3.854-.5-4.71-.788-.874-2.493-1.317-5.067-1.317h-4.464l-2.473 12.732zM20.173 83.547a.694.694 0 0 1-.68-.828l6.557-33.738a.695.695 0 0 1 .68-.561h14.134c4.442 0 7.748 1.206 9.827 3.585 2.088 2.39 2.734 5.734 1.917 9.935-.333 1.711-.905 3.3-1.7 4.724a15.818 15.818 0 0 1-3.128 3.92c-1.531 1.432-3.264 2.472-5.147 3.083-1.852.604-4.232.91-7.07.91h-5.724l-1.634 8.408a.695.695 0 0 1-.682.562z"/><path fill="#fff" d="M34.19 55.826h3.891c3.107 0 4.186.682 4.553 1.089.607.674.723 2.097.331 4.112-.439 2.257-1.253 3.858-2.42 4.756-1.194.92-3.138 1.386-5.773 1.386h-2.786l2.205-11.342zm6.674-8.1H26.731a1.39 1.39 0 0 0-1.364 1.123L18.81 82.588a1.39 1.39 0 0 0 1.363 1.653h7.35a1.39 1.39 0 0 0 1.363-1.124l1.525-7.846h5.151c2.912 0 5.364-.318 7.287-.944 1.977-.642 3.796-1.731 5.406-3.237a16.522 16.522 0 0 0 3.259-4.087c.831-1.487 1.429-3.147 1.775-4.931.86-4.423.161-7.964-2.076-10.524-2.216-2.537-5.698-3.823-10.349-3.823zM30.301 68.557h4.471c2.963 0 5.17-.557 6.62-1.675 1.451-1.116 2.428-2.98 2.938-5.591.485-2.508.264-4.277-.665-5.308-.931-1.03-2.791-1.546-5.584-1.546h-5.036l-2.743 14.12m10.563-19.445c4.252 0 7.353 1.117 9.303 3.348 1.95 2.232 2.536 5.347 1.76 9.346-.322 1.648-.863 3.154-1.625 4.518-.764 1.366-1.76 2.614-2.991 3.747-1.468 1.373-3.097 2.352-4.892 2.935-1.794.584-4.08.875-6.857.875h-6.296l-1.743 8.97h-7.35l6.558-33.739h14.133"/><path d="M69.459 74.577a.694.694 0 0 1-.682-.827l2.9-14.928c.277-1.42.209-2.438-.19-2.87-.245-.263-.979-.704-3.15-.704h-5.256l-3.646 18.768a.695.695 0 0 1-.683.56h-7.29a.695.695 0 0 1-.683-.826l6.558-33.739a.695.695 0 0 1 .682-.561h7.29a.695.695 0 0 1 .683.826L64.41 48.42h5.653c4.307 0 7.227.758 8.928 2.321 1.733 1.593 2.275 4.14 1.608 7.573l-3.051 15.702a.695.695 0 0 1-.682.56h-7.407z"/><path fill="#fff" d="M65.31 38.755h-7.291a1.39 1.39 0 0 0-1.364 1.124l-6.557 33.738a1.39 1.39 0 0 0 1.363 1.654h7.291a1.39 1.39 0 0 0 1.364-1.124l3.537-18.205h4.682c2.168 0 2.624.463 2.641.484.132.14.305.795.019 2.264l-2.9 14.927a1.39 1.39 0 0 0 1.364 1.654h7.408a1.39 1.39 0 0 0 1.363-1.124l3.051-15.7c.715-3.686.103-6.45-1.82-8.217-1.836-1.686-4.91-2.505-9.398-2.505h-4.81l1.421-7.315a1.39 1.39 0 0 0-1.364-1.655zm0 1.39-1.743 8.968h6.496c4.087 0 6.907.714 8.457 2.14 1.553 1.426 2.017 3.735 1.398 6.93l-3.052 15.699h-7.407l2.901-14.928c.33-1.698.208-2.856-.365-3.474-.573-.617-1.793-.926-3.658-.926h-5.829l-3.756 19.327H51.46l6.558-33.739h7.292z"/><path d="M92.136 67.864c2.793 0 4.878-.515 6.198-1.53 1.304-1.006 2.206-2.747 2.679-5.175.44-2.27.273-3.854-.5-4.71-.788-.874-2.493-1.317-5.067-1.317h-4.463l-2.475 12.732zM77.54 83.547a.694.694 0 0 1-.682-.828l6.557-33.738a.695.695 0 0 1 .682-.561H98.23c4.442 0 7.748 1.206 9.826 3.585 2.089 2.39 2.734 5.734 1.917 9.935a15.878 15.878 0 0 1-1.699 4.724 15.838 15.838 0 0 1-3.128 3.92c-1.53 1.432-3.265 2.472-5.147 3.083-1.852.604-4.232.91-7.071.91h-5.723l-1.633 8.408a.695.695 0 0 1-.683.562z"/><path fill="#fff" d="M91.555 55.826h3.891c3.107 0 4.186.682 4.552 1.089.61.674.724 2.097.333 4.112-.44 2.257-1.254 3.858-2.421 4.756-1.195.92-3.139 1.386-5.773 1.386h-2.786l2.204-11.342zm6.674-8.1H84.096a1.39 1.39 0 0 0-1.363 1.123l-6.558 33.739a1.39 1.39 0 0 0 1.364 1.653h7.35a1.39 1.39 0 0 0 1.363-1.124l1.525-7.846h5.15c2.911 0 5.364-.318 7.286-.944 1.978-.642 3.797-1.731 5.408-3.238a16.52 16.52 0 0 0 3.258-4.086c.832-1.487 1.428-3.147 1.775-4.931.86-4.423.162-7.964-2.076-10.524-2.216-2.537-5.697-3.823-10.35-3.823zM87.666 68.557h4.47c2.964 0 5.17-.557 6.622-1.675 1.45-1.116 2.428-2.98 2.936-5.591.487-2.508.266-4.277-.665-5.308-.93-1.03-2.791-1.546-5.583-1.546h-5.035Zm10.563-19.445c4.251 0 7.354 1.117 9.303 3.348 1.95 2.232 2.537 5.347 1.759 9.346-.32 1.648-.862 3.154-1.624 4.518-.763 1.366-1.76 2.614-2.992 3.747-1.467 1.373-3.097 2.352-4.892 2.935-1.793.584-4.078.875-6.856.875h-6.295l-1.745 8.97h-7.35l6.558-33.739h14.133"/><defs><radialGradient id="php-a" cx="0" cy="0" r="1" gradientTransform="matrix(84.04136 0 0 84.04136 38.426 42.169)" gradientUnits="userSpaceOnUse"><stop stop-color="#AEB2D5"/><stop offset=".3" stop-color="#AEB2D5"/><stop offset=".75" stop-color="#484C89"/><stop offset="1" stop-color="#484C89"/></radialGradient></defs></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">PHP</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="React"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><g fill="#61DAFB"><circle cx="64" cy="64" r="11.4"/><path d="M107.3 45.2c-2.2-.8-4.5-1.6-6.9-2.3.6-2.4 1.1-4.8 1.5-7.1 2.1-13.2-.2-22.5-6.6-26.1-1.9-1.1-4-1.6-6.4-1.6-7 0-15.9 5.2-24.9 13.9-9-8.7-17.9-13.9-24.9-13.9-2.4 0-4.5.5-6.4 1.6-6.4 3.7-8.7 13-6.6 26.1.4 2.3.9 4.7 1.5 7.1-2.4.7-4.7 1.4-6.9 2.3C8.2 50 1.4 56.6 1.4 64s6.9 14 19.3 18.8c2.2.8 4.5 1.6 6.9 2.3-.6 2.4-1.1 4.8-1.5 7.1-2.1 13.2.2 22.5 6.6 26.1 1.9 1.1 4 1.6 6.4 1.6 7.1 0 16-5.2 24.9-13.9 9 8.7 17.9 13.9 24.9 13.9 2.4 0 4.5-.5 6.4-1.6 6.4-3.7 8.7-13 6.6-26.1-.4-2.3-.9-4.7-1.5-7.1 2.4-.7 4.7-1.4 6.9-2.3 12.5-4.8 19.3-11.4 19.3-18.8s-6.8-14-19.3-18.8zM92.5 14.7c4.1 2.4 5.5 9.8 3.8 20.3-.3 2.1-.8 4.3-1.4 6.6-5.2-1.2-10.7-2-16.5-2.5-3.4-4.8-6.9-9.1-10.4-13 7.4-7.3 14.9-12.3 21-12.3 1.3 0 2.5.3 3.5.9zM81.3 74c-1.8 3.2-3.9 6.4-6.1 9.6-3.7.3-7.4.4-11.2.4-3.9 0-7.6-.1-11.2-.4-2.2-3.2-4.2-6.4-6-9.6-1.9-3.3-3.7-6.7-5.3-10 1.6-3.3 3.4-6.7 5.3-10 1.8-3.2 3.9-6.4 6.1-9.6 3.7-.3 7.4-.4 11.2-.4 3.9 0 7.6.1 11.2.4 2.2 3.2 4.2 6.4 6 9.6 1.9 3.3 3.7 6.7 5.3 10-1.7 3.3-3.4 6.6-5.3 10zm8.3-3.3c1.5 3.5 2.7 6.9 3.8 10.3-3.4.8-7 1.4-10.8 1.9 1.2-1.9 2.5-3.9 3.6-6 1.2-2.1 2.3-4.2 3.4-6.2zM64 97.8c-2.4-2.6-4.7-5.4-6.9-8.3 2.3.1 4.6.2 6.9.2 2.3 0 4.6-.1 6.9-.2-2.2 2.9-4.5 5.7-6.9 8.3zm-18.6-15c-3.8-.5-7.4-1.1-10.8-1.9 1.1-3.3 2.3-6.8 3.8-10.3 1.1 2 2.2 4.1 3.4 6.1 1.2 2.2 2.4 4.1 3.6 6.1zm-7-25.5c-1.5-3.5-2.7-6.9-3.8-10.3 3.4-.8 7-1.4 10.8-1.9-1.2 1.9-2.5 3.9-3.6 6-1.2 2.1-2.3 4.2-3.4 6.2zM64 30.2c2.4 2.6 4.7 5.4 6.9 8.3-2.3-.1-4.6-.2-6.9-.2-2.3 0-4.6.1-6.9.2 2.2-2.9 4.5-5.7 6.9-8.3zm22.2 21l-3.6-6c3.8.5 7.4 1.1 10.8 1.9-1.1 3.3-2.3 6.8-3.8 10.3-1.1-2.1-2.2-4.2-3.4-6.2zM31.7 35c-1.7-10.5-.3-17.9 3.8-20.3 1-.6 2.2-.9 3.5-.9 6 0 13.5 4.9 21 12.3-3.5 3.8-7 8.2-10.4 13-5.8.5-11.3 1.4-16.5 2.5-.6-2.3-1-4.5-1.4-6.6zM7 64c0-4.7 5.7-9.7 15.7-13.4 2-.8 4.2-1.5 6.4-2.1 1.6 5 3.6 10.3 6 15.6-2.4 5.3-4.5 10.5-6 15.5C15.3 75.6 7 69.6 7 64zm28.5 49.3c-4.1-2.4-5.5-9.8-3.8-20.3.3-2.1.8-4.3 1.4-6.6 5.2 1.2 10.7 2 16.5 2.5 3.4 4.8 6.9 9.1 10.4 13-7.4 7.3-14.9 12.3-21 12.3-1.3 0-2.5-.3-3.5-.9zM96.3 93c1.7 10.5.3 17.9-3.8 20.3-1 .6-2.2.9-3.5.9-6 0-13.5-4.9-21-12.3 3.5-3.8 7-8.2 10.4-13 5.8-.5 11.3-1.4 16.5-2.5.6 2.3 1 4.5 1.4 6.6zm9-15.6c-2 .8-4.2 1.5-6.4 2.1-1.6-5-3.6-10.3-6-15.6 2.4-5.3 4.5-10.5 6-15.5 13.8 4 22.1 10 22.1 15.6 0 4.7-5.8 9.7-15.7 13.4z"/></g></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">React</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="Django"><svg class="w-full h-full" version="1.0" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" fill="#44b78b"><path d="M59.448 0h20.93v96.88c-10.737 2.04-18.62 2.855-27.181 2.855-25.551-.001-38.87-11.551-38.87-33.705 0-21.338 14.135-35.2 36.015-35.2 3.398 0 5.98.272 9.106 1.087zm0 48.765c-2.446-.815-4.485-1.086-7.067-1.086-10.6 0-16.717 6.523-16.717 17.939 0 11.145 5.845 17.26 16.582 17.26 2.309 0 4.212-.136 7.202-.542z"/><path d="M113.672 32.321V80.84c0 16.717-1.224 24.735-4.893 31.666-3.398 6.661-7.883 10.873-17.124 15.494l-19.435-9.241c9.242-4.35 13.726-8.153 16.58-14 2.99-5.979 3.943-12.91 3.943-31.122V32.321zM92.742.111h20.93v21.474h-20.93z"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">Django</span></div></li>
+    <li class="reveal w-[calc((100%-2rem)/3)] sm:w-40"><div class="group glass-panel rounded-2xl p-4 sm:p-5 h-full flex flex-col items-center gap-3 hover:border-accent/50 transition-all"><div class="w-12 h-12 sm:w-14 sm:h-14 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" role="img" aria-label="MySQL"><svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#3fa9d0" d="M117.688 98.242c-6.973-.191-12.297.461-16.852 2.379-1.293.547-3.355.559-3.566 2.18.711.746.82 1.859 1.387 2.777 1.086 1.754 2.922 4.113 4.559 5.352 1.789 1.348 3.633 2.793 5.551 3.961 3.414 2.082 7.223 3.27 10.504 5.352 1.938 1.23 3.859 2.777 5.75 4.164.934.684 1.563 1.75 2.773 2.18v-.195c-.637-.812-.801-1.93-1.387-2.777l-2.578-2.578c-2.52-3.344-5.719-6.281-9.117-8.719-2.711-1.949-8.781-4.578-9.91-7.73l-.199-.199c1.922-.219 4.172-.914 5.949-1.391 2.98-.797 5.645-.59 8.719-1.387l4.164-1.187v-.793c-1.555-1.594-2.664-3.707-4.359-5.152-4.441-3.781-9.285-7.555-14.273-10.703-2.766-1.746-6.184-2.883-9.117-4.363-.988-.496-2.719-.758-3.371-1.586-1.539-1.961-2.379-4.449-3.566-6.738-2.488-4.793-4.93-10.023-7.137-15.066-1.504-3.437-2.484-6.828-4.359-9.91-9-14.797-18.687-23.73-33.695-32.508-3.195-1.867-7.039-2.605-11.102-3.57l-6.543-.395c-1.332-.555-2.715-2.184-3.965-2.977C16.977 3.52 4.223-3.312.539 5.672-1.785 11.34 4.016 16.871 6.09 19.746c1.457 2.012 3.32 4.273 4.359 6.539.688 1.492.805 2.984 1.391 4.559 1.438 3.883 2.695 8.109 4.559 11.695.941 1.816 1.98 3.727 3.172 5.352.727.996 1.98 1.438 2.18 2.973-1.227 1.715-1.297 4.375-1.984 6.543-3.098 9.77-1.926 21.91 2.578 29.137 1.383 2.223 4.641 6.98 9.117 5.156 3.918-1.598 3.043-6.539 4.164-10.902.254-.988.098-1.715.594-2.379v.199l3.57 7.133c2.641 4.254 7.324 8.699 11.297 11.699 2.059 1.555 3.68 4.242 6.344 5.152v-.199h-.199c-.516-.805-1.324-1.137-1.98-1.781-1.551-1.523-3.277-3.414-4.559-5.156-3.613-4.902-6.805-10.27-9.711-15.855-1.391-2.668-2.598-5.609-3.77-8.324-.453-1.047-.445-2.633-1.387-3.172-1.281 1.988-3.172 3.598-4.164 5.945-1.582 3.754-1.789 8.336-2.375 13.082-.348.125-.195.039-.398.199-2.762-.668-3.73-3.508-4.758-5.949-2.594-6.164-3.078-16.09-.793-23.191.59-1.836 3.262-7.617 2.18-9.316-.516-1.691-2.219-2.672-3.172-3.965-1.18-1.598-2.355-3.703-3.172-5.551-2.125-4.805-3.113-10.203-5.352-15.062-1.07-2.324-2.875-4.676-4.359-6.738-1.645-2.289-3.484-3.977-4.758-6.742-.453-.984-1.066-2.559-.398-3.566.215-.684.516-.969 1.191-1.191 1.148-.887 4.352.297 5.547.793 3.18 1.32 5.832 2.578 8.527 4.363 1.289.855 2.598 2.512 4.16 2.973h1.785c2.789.641 5.914.195 8.523.988 4.609 1.402 8.738 3.582 12.488 5.949 11.422 7.215 20.766 17.48 27.156 29.734 1.027 1.973 1.473 3.852 2.379 5.945 1.824 4.219 4.125 8.559 5.941 12.688 1.816 4.113 3.582 8.27 6.148 11.695 1.348 1.801 6.551 2.766 8.918 3.766 1.66.699 4.379 1.43 5.949 2.379 3 1.809 5.906 3.965 8.723 5.945 1.402.992 5.73 3.168 5.945 4.957zm-88.605-75.52c-1.453-.027-2.48.156-3.566.395v.199h.195c.695 1.422 1.918 2.34 2.777 3.566l1.98 4.164.199-.195c1.227-.867 1.789-2.25 1.781-4.363-.492-.52-.562-1.164-.992-1.785-.562-.824-1.66-1.289-2.375-1.98zm0 0"/></svg></div><span class="text-[11px] font-mono text-muted uppercase tracking-wider group-hover:text-white transition-colors">MySQL</span></div></li>
+  </ul>
+</section>
+
+<!-- SOCIAL MEDIA -->
+<section id="social" class="bg-obsidian border-y border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-16 pb-8">
+    <span class="text-xs font-mono text-accent uppercase tracking-widest">// FIND ME ONLINE</span>
+    <h2 class="text-4xl sm:text-5xl font-extrabold mt-2 tracking-tight">Social.</h2>
+  </div>
+  <div id="social-grid" class="grid grid-cols-2 lg:grid-cols-4"></div>
+</section>
+
+<!-- SERVICES / SKILLS / EXPERIENCE anchors are in the nav; works carousel -->
+<section id="services" class="py-14 sm:py-20 bg-surface/60 border-t border-white/5 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 mb-8">
+    <span class="text-xs font-mono text-accent uppercase tracking-widest">// IMMERSIVE GALLERY</span>
+    <h3 class="text-2xl sm:text-3xl font-bold mt-1">Featured Works</h3>
+  </div>
+  <div id="carousel" class="animate-marquee"></div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements" class="py-20 sm:py-28 bg-white text-neutral-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 text-center">
+    <span class="text-xs font-mono text-accent uppercase tracking-widest">// RECOGNITION & CREDENTIALS</span>
+    <h2 class="text-4xl sm:text-6xl font-extrabold mt-3 tracking-tight">Achievements.</h2>
+    <p class="text-lg font-semibold text-neutral-700 mt-2">Full Stack & Frontend Developer</p>
+    <div id="certs" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-14 text-left"></div>
+    <a href="#" onclick="showToast('Opens achievements.html on your PC');return false" class="inline-flex items-center gap-2 mt-12 px-7 py-3.5 bg-neutral-900 hover:bg-accent text-white font-semibold rounded-xl text-sm transition-colors">View all achievements <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+  </div>
+</section>
+
+<!-- CONTACT (new) -->
+<section id="contact" class="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-8">
+  <span class="text-xs font-mono text-accent uppercase tracking-widest">// CONTACT</span>
+  <h2 class="text-4xl sm:text-6xl font-extrabold mt-2 tracking-tight">Let’s build something <span class="text-accent">exceptional.</span></h2>
+  <p class="text-muted mt-4 max-w-xl leading-relaxed">Have a project, a role or just a question? Send a message and I’ll reply within 24 hours.</p>
+  <div class="grid lg:grid-cols-12 gap-8 mt-12">
+    <div class="lg:col-span-5 space-y-4" id="contact-cards"></div>
+    <form id="contact-form" class="lg:col-span-7 glass-panel rounded-3xl p-5 sm:p-8 space-y-4" novalidate>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <label class="block"><span class="block text-xs font-mono text-muted mb-1">YOUR NAME</span><input name="name" required autocomplete="name" class="w-full bg-surface border border-white/10 rounded-xl px-4 py-3 text-sm" placeholder="John Doe"></label>
+        <label class="block"><span class="block text-xs font-mono text-muted mb-1">EMAIL</span><input name="email" type="email" required autocomplete="email" class="w-full bg-surface border border-white/10 rounded-xl px-4 py-3 text-sm" placeholder="john@example.com"></label>
+      </div>
+      <label class="block"><span class="block text-xs font-mono text-muted mb-1">I’M INTERESTED IN</span>
+        <select name="topic" class="w-full bg-surface border border-white/10 rounded-xl px-4 py-3 text-sm"><option>A new project</option><option>A full-time role</option><option>Freelance work</option><option>Something else</option></select></label>
+      <label class="block"><span class="block text-xs font-mono text-muted mb-1">MESSAGE</span><textarea name="message" rows="5" required class="w-full bg-surface border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" placeholder="Tell me about your project..."></textarea></label>
+      <button type="submit" class="w-full py-3.5 bg-accent hover:bg-accent/90 font-semibold rounded-xl shadow-lg shadow-accent/25 flex items-center justify-center gap-2">Send message <i data-lucide="send" class="w-4 h-4"></i></button>
+      <p class="text-[11px] text-muted text-center">This opens your email app with the message filled in.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="py-8 border-t border-white/10 text-xs font-mono text-muted">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-3">
+    <span>© 2026 Mohammad Badol. All rights reserved.</span><span class="text-accent">React & ASP.NET Portfolio</span>
+  </div>
+</footer>
+
+<script>// Custom cursor: orange corner brackets + dot. Snaps to buttons/links, shrinks on click. Desktop (mouse) only.
+(function(){
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  document.documentElement.classList.add('has-cursor');
+  const el=document.createElement('div');el.id='mb-cursor';
+  el.innerHTML='<i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><i class="dot"></i>';
+  document.body.appendChild(el);
+  const SEL='a,button,input,textarea,select,[onclick],.project-card',BASE=32;
+  const k=matchMedia('(prefers-reduced-motion:reduce)').matches?1:.25;
+  let mx=-100,my=-100,x=mx,y=my,w=BASE,h=BASE,cur=null,seen=false;
+
+  addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    if(!seen){seen=true;x=mx;y=my;el.style.opacity=1}
+    cur=e.target.closest?e.target.closest(SEL):null;
+  },{passive:true});
+  document.addEventListener('mouseleave',()=>{el.style.opacity=0;seen=false});
+  addEventListener('mousedown',()=>el.classList.add('press'));
+  addEventListener('mouseup',()=>el.classList.remove('press'));
+  addEventListener('click',e=>{
+    const r=document.createElement('span');r.className='mb-ring';
+    r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+    document.body.appendChild(r);setTimeout(()=>r.remove(),500);
+  });
+
+  (function loop(){
+    let gx=mx,gy=my,tw=BASE,th=BASE,mode='';
+    if(cur&&document.contains(cur)){
+      const r=cur.getBoundingClientRect();
+      if(r.width<=300&&r.height<=130){gx=r.left+r.width/2;gy=r.top+r.height/2;tw=r.width+12;th=r.height+12;mode='on-btn'}
+      else{tw=th=BASE*1.7;mode='on-big'}
+    }
+    el.classList.toggle('on-btn',mode==='on-btn');el.classList.toggle('on-big',mode==='on-big');
+    x+=(gx-x)*k;y+=(gy-y)*k;w+=(tw-w)*k;h+=(th-h)*k;
+    el.style.width=w+'px';el.style.height=h+'px';
+    el.style.transform=`translate(${x-w/2}px,${y-h/2}px)`;
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+<script>// ===== EDIT YOUR PERSONAL INFO HERE =====
+const CONFIG = {
+  email: "you@example.com",          // <-- change
+  phone: "+880 1755921413",         // <-- change
+  whatsapp: "8801755921413",         // <-- digits only, with country code
+  github: "https://github.com/YodirHydra",
+  linkedin: "https://www.linkedin.com/in/parvez-hossen-badal/",
+  facebook: "https://www.facebook.com/mohammad3badol/"
+};
+
+const PROJECTS = [
+  {cat: "IoT & Smart City",title: "Jolodhar — Smart Drain Monitoring",img: "jolodharversion7.jpg", tech: ["Internet of Things (IoT)","Smart Drain Monitoring","Waterlogging Prediction","3D Prototype","Circuit Design"],
+  summary: "An IoT-based smart drain monitoring and waterlogging prediction system designed to monitor drainage conditions and identify potential waterlogging risks before they become serious problems.",
+  ach: ["Designed a smart drain monitoring and waterlogging prediction system.","Developed a prototype architecture and 3D model to demonstrate the proposed solution.","Prepared a circuit flow to illustrate the planned IoT system implementation." ]},
+  {cat:"Fintech & Payments",title:"Apex Financial Analytics Suite",img:"photo-1460925895917-afdab827c52f",tech:["React.js","D3.js","Stripe API","Node.js"],
+   summary:"Financial reporting platform with interactive D3 charts, Stripe billing and tokenized auth.",
+   ach:["Secure Stripe webhook processing.","Real-time charts handling 50k+ data points.","JWT and encrypted cookie security."]},
+  {cat:"E-Commerce",title:"Vortex Multi-Vendor Marketplace",img:"photo-1557821552-17105176674c",tech:["React.js","Redux Toolkit","Tailwind CSS","MongoDB"],
+   summary:"Scalable storefront with Redux Toolkit state, multi-facet filtering and smooth cart flows.",
+   ach:["Instant UI response via Redux Toolkit.","Debounced, cached product search.","22% conversion lift from a streamlined checkout."]},
+  {cat:"Healthcare Tech",title:"MediPulse Patient Management",img:"photo-1507238691740-187a5b1d37b8",tech:["React.js","ASP.NET Core","Entity Framework","SQL Server"],
+   summary:"Appointment booking and patient record portal on secure ASP.NET Core Web APIs.",
+   ach:["Role-based auth for doctors, patients and admins.","Scheduling calendar with email reminders.","Strict encryption for sensitive records."]},
+  {cat:"Productivity SaaS",title:"TaskFlow Agile Kanban Board",img:"photo-1522071820081-009f0129c71c",tech:["React.js","DnD Kit","Tailwind CSS","Express.js"],
+   summary:"Collaborative workspace with drag-and-drop tasks, live team updates and sprint analytics.",
+   ach:["Smooth drag-and-drop with modern React hooks.","Board state synced across users.","Sprint burndown analytics."]},
+  {cat:"Real Estate",title:"PrimeEstate Property Portal",img:"photo-1531403009284-440f080d1e12",tech:["React.js","Mapbox GL","Tailwind CSS","REST API"],
+   summary:"Property search with map clustering, virtual tours and mortgage calculators.",
+   ach:["Mapbox GL property clusters.","Lazy loading and WebP image pipeline.","Instant mortgage simulation."]},
+  {cat:"EdTech Platform",title:"SkillMatrix LMS & Course Hub",img:"photo-1516321318423-f06f85e504b3",tech:["React.js","Video.js","Node.js","MongoDB"],
+   summary:"Learning portal with video modules, automated quizzes and progress tracking.",
+   ach:["Custom video player with bookmarks and speed control.","Auto-graded quizzes with instant feedback.","Progress dashboards and milestone badges."]},
+  {cat:"Travel & Leisure",title:"Wanderlust Booking Experience",img:"photo-1512941937669-90a1b58e7e9c",tech:["React.js","Next.js","Stripe","Tailwind CSS"],
+   summary:"Travel booking app with localized itineraries, multi-currency and instant confirmation.",
+   ach:["Next.js SSR for fast, SEO-friendly pages.","Multi-currency and localized payments.","Responsive CSS grid layouts."]}
+];
+
+// ===== FEATURED WORKS LOOP IMAGES (edit freely) =====
+// img = the photo's file name, exactly as it is in your website folder (same spelling, same capital letters, with its extension).
+const GALLERY = [
+  {"cat": "AI BuildFest", "title": "The Infinity AI BuildFest team", "img": "Gemini_Generated_Image_4hwaqw4hwaqw4hwa.jpg"},
+  {"cat": "Phoenix Summit", "title": "Inside the main hall", "img": "IMG_20261020_150502.jpg.jpeg"},
+  {"cat": "AI BuildFest", "title": "With the judge", "img": "IMG_20261020_150525.jpg.jpeg"},
+  {"cat": "AI BuildFest", "title": "Team photo at the venue", "img": "1781448556136.jpg"},
+  {"cat": "UITS Skillathon 2026", "title": "Trophy ceremony", "img": "1792130183656 - Copy (2) - Copy.jpg"},
+  {"cat": "Phoenix Summit", "title": "Team at Phoenix Summit Dhaka", "img": "IMG_20261020_150444.jpg.jpeg"},
+  {"cat": "IEEE UITS", "title": "IEEE Day celebration 2026", "img": "1792130181989.JPG"},
+  {"cat": "AI Dev Fest", "title": "Team at AI Dev Fest", "img": "1791446481175.jpg"},
+  {"cat": "AI BuildFest", "title": "Shadow Agents & Deepfake Shield AI", "img": "IMG_20261020_150544.jpg.jpeg"},
+  {"cat": "AI Dev Fest", "title": "Presenting upay ScamShield", "img": "1791446483335.jpg"}
+];
+
+</script>
+<script>const NAV=[["home","Home"],["works","Works"],["whoiam","About"],["languages","Skills"],["social","Social"],["services","Gallery"],["achievements","Awards"],["contact","Contact"]];
+const $=id=>document.getElementById(id);
+const img = (src, w = 800) => src.startsWith("photo-")
+  ? `https://images.unsplash.com/${src}?auto=format&fit=crop&q=80&w=${w}`
+  : src;
+const fallback=n=>`this.src='https://placehold.co/600x400/121214/f9572a?text=${n}'`;
+
+// Navigation
+$('desktop-nav').innerHTML=NAV.map(([id,t])=>`<a href="#${id}" class="px-3 py-1.5 text-xs font-medium text-muted hover:text-accent transition-colors">${t}</a>`).join('');
+$('mobile-links').innerHTML=NAV.map(([id,t])=>`<a href="#${id}" onclick="toggleMenu()" class="text-muted hover:text-accent">${t}</a>`).join('');
+$('dots').innerHTML=NAV.map(([id,t])=>`<a href="#${id}" title="${t}" data-section="${id}" class="w-2.5 h-2.5 rounded-full bg-white/30 hover:bg-accent transition-all block"></a>`).join('');
+function toggleMenu(){$('mobile-menu').classList.toggle('translate-x-full')}
+
+// Toast
+function showToast(m){const t=$('toast');$('toast-message').textContent=m;t.classList.remove('translate-y-32','opacity-0');setTimeout(()=>t.classList.add('translate-y-32','opacity-0'),3000)}
+function downloadResume(){showToast('Add your resume PDF to the folder and link it here');}
+
+// Clock
+const fmt=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dhaka',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+(function tick(){$('live-clock').textContent=fmt.format(new Date())+' BDT';setTimeout(tick,1000)})();
+
+// Marquee (duplicated for seamless loop)
+document.querySelectorAll('[data-marquee]').forEach(el=>{
+  const items=el.dataset.marquee.split(',').map(t=>`<span class="flex items-center gap-2 mr-8"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>${t}</span>`).join('');
+  el.innerHTML=`<div class="flex">${items}</div><div class="flex" aria-hidden="true">${items}</div>`;
+});
+
+// Projects
+const pad=n=>String(n).padStart(2,'0'),total=PROJECTS.length;
+$('projects-list').innerHTML=PROJECTS.map((p,i)=>`
+ <article class="project-card glass-panel p-4 sm:p-6 rounded-3xl hover:border-accent/50 transition-all cursor-pointer group" data-i="${i}">
+  <div class="relative h-52 sm:h-64 rounded-2xl overflow-hidden mb-5 bg-surface">
+   <img loading="lazy" src="${img(p.img)}" alt="${p.title}" onerror="${fallback('Project+'+(i+1))}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+   <span class="absolute top-3 left-3 bg-obsidian/80 px-3 py-1 rounded-full text-xs font-mono text-accent">${pad(i+1)} / ${pad(total)}</span>
+  </div>
+  <span class="text-xs font-mono text-accent uppercase">${p.cat}</span>
+  <h3 class="text-xl sm:text-2xl font-bold mt-1 mb-2">${p.title}</h3>
+  <p class="text-muted text-sm">${p.summary}</p>
+  <div class="flex flex-wrap gap-2 mt-4 lg:hidden">${p.tech.map(t=>`<span class="px-2 py-1 rounded-lg bg-surface border border-white/10 text-[11px] font-mono text-muted">${t}</span>`).join('')}</div>
+ </article>`).join('');
+const cards=[...document.querySelectorAll('.project-card')];
+function showProject(i){
+  const p=PROJECTS[i];
+  $('p-cat').textContent=p.cat;$('p-num').textContent=`${pad(i+1)} / ${pad(total)}`;$('p-title').textContent=p.title;$('p-sum').textContent=p.summary;
+  $('p-tech').innerHTML=p.tech.map(t=>`<span class="px-2.5 py-1 rounded-lg bg-surface border border-white/10 text-xs font-mono text-muted">${t}</span>`).join('');
+  $('p-ach').innerHTML=p.ach.map(a=>`<li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-accent shrink-0 mt-0.5"></i><span>${a}</span></li>`).join('');
+  cards.forEach((c,k)=>{c.classList.toggle('border-accent',k===i)});
+  lucide.createIcons();
+}
+const po=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&showProject(+e.target.dataset.i)),{rootMargin:'-35% 0px -35% 0px'});
+cards.forEach(c=>{po.observe(c);c.addEventListener('click',()=>showProject(+c.dataset.i))});
+showProject(0);
+
+// Carousel (GALLERY photos, duplicated for a seamless loop; each photo keeps its own shape)
+const slide=g=>`<div class="h-[280px] sm:h-[380px] lg:h-[460px] mr-2 relative overflow-hidden group shrink-0">
+ <img decoding="async" src="${encodeURI(g.img)}" alt="${g.title}" onerror="${fallback('Photo')}" class="h-full w-auto max-w-none block group-hover:scale-105 transition-transform duration-700">
+ <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent flex flex-col justify-end p-4 sm:p-5"><span class="text-[11px] sm:text-xs font-mono text-accent uppercase">${g.cat}</span><h4 class="text-base sm:text-lg font-bold leading-snug">${g.title}</h4></div></div>`;
+const set=GALLERY.map(slide).join('');
+$('carousel').innerHTML=`<div class="flex">${set}</div><div class="flex" aria-hidden="true">${set}</div>`;
+$('carousel').style.animationDuration=(GALLERY.length*6)+'s'; // more photos = longer loop, same speed
+
+// Certificates
+const CERTS=[
+ {tag:"Frontend Masterclass",t:"Advanced React & State Architecture",d:"High-performance React, custom hooks and Redux Toolkit.",date:"Jan 2025",img:"photo-1589330694653-ded6df03f754"},
+ {tag:"Microsoft Certified",t:"ASP.NET Core Full Stack Developer",d:"Secure REST APIs, Entity Framework and SignalR services.",date:"Nov 2025",img:"photo-1516321318423-f06f85e504b3"},
+ {tag:"Design Systems",t:"UI/UX Architecture & Tailwind CSS",d:"Dark mode interfaces, accessible components, responsive layouts.",date:"Aug 2026",img:"photo-1531403009284-440f080d1e12"}];
+$('certs').innerHTML=CERTS.map(c=>`<div class="bg-neutral-50 border border-neutral-200 rounded-3xl p-5 shadow-xl flex flex-col justify-between">
+ <div><img loading="lazy" src="${img(c.img,600)}" alt="${c.t}" onerror="${fallback('Certificate')}" class="w-full h-48 object-cover rounded-2xl mb-5">
+ <span class="text-xs font-mono text-accent uppercase font-bold">${c.tag}</span><h3 class="text-lg font-bold mt-1">${c.t}</h3><p class="text-xs text-neutral-600 mt-2">${c.d}</p></div>
+ <div class="pt-4 mt-5 border-t border-neutral-200 flex justify-between items-center"><span class="text-xs font-mono text-neutral-400">Issued ${c.date}</span>
+ <button onclick="showToast('Add your credential link here')" class="text-xs font-semibold text-accent hover:underline">View Certificate</button></div></div>`).join('');
+
+// Contact cards
+const C=[["mail","Email",CONFIG.email,`mailto:${CONFIG.email}`],["phone","Phone",CONFIG.phone,`tel:${CONFIG.phone.replace(/\s/g,'')}`],
+ ["message-circle","WhatsApp","Chat with me",`https://wa.me/${CONFIG.whatsapp}`],["map-pin","Location","Dhaka, Bangladesh","#contact"],
+ ["github","GitHub","Source code & projects",CONFIG.github],["linkedin","LinkedIn","Connect professionally",CONFIG.linkedin]];
+$('contact-cards').innerHTML=C.map(([ic,l,v,h])=>`<a href="${h}" ${h.startsWith('http')?'target="_blank" rel="noopener"':''} class="glass-panel rounded-2xl p-4 flex items-center gap-4 hover:border-accent/50 transition-colors">
+ <span class="w-11 h-11 rounded-xl bg-surface border border-white/10 flex items-center justify-center shrink-0"><i data-lucide="${ic}" class="w-5 h-5 text-accent"></i></span>
+ <span class="min-w-0"><span class="block text-[11px] font-mono text-muted uppercase">${l}</span><span class="block text-sm font-semibold truncate">${v}</span></span></a>`).join('');
+
+// Social tiles
+const SOC=[["github","GitHub","Code & projects",CONFIG.github,"#1f2328","#fff"],
+ ["linkedin","LinkedIn","Let's connect",CONFIG.linkedin,"#0a66c2","#fff"],
+ ["facebook","Facebook","Follow me",CONFIG.facebook,"#1877f2","#fff"],
+ ["message-circle","WhatsApp","Message me",`https://wa.me/${CONFIG.whatsapp}`,"#25d366","#052e16"]];
+$('social-grid').innerHTML=SOC.map(([ic,n,s,h,bg,fg])=>`<a href="${h}" target="_blank" rel="noopener" style="background:${bg};color:${fg}" class="group relative min-h-[44vh] lg:min-h-[70vh] p-5 sm:p-8 flex flex-col justify-between overflow-hidden hover:brightness-110 transition">
+ <i data-lucide="${ic}" class="w-9 h-9 sm:w-12 sm:h-12"></i>
+ <span><span class="block text-xl sm:text-3xl font-extrabold">${n}</span><span class="block text-xs sm:text-sm opacity-80 mt-1">${s}</span>
+ <i data-lucide="arrow-up-right" class="w-6 h-6 mt-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i></span></a>`).join('');
+
+// Contact form -> opens email app
+$('contact-form').addEventListener('submit',e=>{
+  e.preventDefault();const f=e.target;
+  if(!f.checkValidity()){f.reportValidity();return}
+  const d=new FormData(f);
+  const body=`${d.get('message')}\n\n— ${d.get('name')} (${d.get('email')})`;
+  location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Portfolio: '+d.get('topic'))}&body=${encodeURIComponent(body)}`;
+  showToast('Opening your email app...');f.reset();
+});
+
+// Counters
+let counted=false;
+new IntersectionObserver((es,o)=>{if(es[0].isIntersecting&&!counted){counted=true;
+ document.querySelectorAll('[data-target]').forEach(el=>{const t=+el.dataset.target,s=el.dataset.suffix||'';let n=0;
+  const step=()=>{n+=t/110;if(n<t){el.textContent=Math.ceil(n)+s;requestAnimationFrame(step)}else el.textContent=t+s};step()});}},{threshold:.3}).observe($('whoiam'));
+
+// Reveal on scroll
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');ro.unobserve(e.target)}}),{threshold:.2});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// Scrollspy
+const dots=document.querySelectorAll('[data-section]');
+addEventListener('scroll',()=>{let cur='home';NAV.forEach(([id])=>{const s=$(id);if(s&&scrollY>=s.offsetTop-300)cur=id});
+ dots.forEach(d=>{const on=d.dataset.section===cur;d.classList.toggle('bg-accent',on);d.classList.toggle('bg-white/30',!on);d.classList.toggle('scale-125',on)})},{passive:true});
+
+lucide.createIcons();
+</script>
+</body>
+</html>
